@@ -1,6 +1,7 @@
 ﻿using IdunnoAPI.DAL.Repositories;
 using IdunnoAPI.DAL.Repositories.Interfaces;
 using IdunnoAPI.DAL.Services.Interfaces;
+using IdunnoAPI.Helpers;
 using IdunnoAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,9 +34,19 @@ namespace IdunnoAPI.DAL.Services
         {
             Post post = await Posts.FindPostAsync(postId);
 
-            User author = await _users.FindUserAsync(post.UserId);
+            string author;
+            try
+            {
+                User authorUser = await _users.FindUserAsync(post.UserId);
+                author = authorUser.Username;
+            }
+            catch (RequestException notFoundException)
+            {
+                author = "Account deleted";
+            }
 
-            return new KeyValuePair<Post, string>(post, author.Username);
+            return new KeyValuePair<Post, string>(post, author);
+
         }
 
         protected virtual void Dispose(bool disposing)
