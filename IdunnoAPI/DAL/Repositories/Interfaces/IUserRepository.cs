@@ -1,12 +1,13 @@
 ﻿using IdunnoAPI.Models;
+using System.Linq.Expressions;
 
 namespace IdunnoAPI.DAL.Repositories.Interfaces
 {
     public interface IUserRepository : IDisposable
     {
-        IEnumerable<User> GetUsers();
-        Task<User> GetUserByIdAsync(int id);
-        Task<bool> CheckIfExists(User user);
+        IQueryable<User> GetUsersAsQueryable();
+        Task<User> FindUserAsync(Expression<Func<User, bool>> predicate);
+        Task<User> FindUserAsync(int userId);
         Task<bool> AddUserAsync(User user);
         Task<bool> DeleteUserAsync(int userId);
         Task<bool> UpdateUserAsync(User user);

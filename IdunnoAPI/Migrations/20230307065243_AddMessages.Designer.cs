@@ -3,6 +3,7 @@ using IdunnoAPI.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdunnoAPI.Migrations
 {
     [DbContext(typeof(IdunnoDbContext))]
-    partial class IdunnoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230307065243_AddMessages")]
+    partial class AddMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +48,7 @@ namespace IdunnoAPI.Migrations
 
                     b.HasIndex("ShipperId");
 
-                    b.ToTable("Messages", (string)null);
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("IdunnoAPI.Models.Post", b =>
@@ -76,7 +79,7 @@ namespace IdunnoAPI.Migrations
 
                     b.HasKey("PostId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("IdunnoAPI.Models.User", b =>
@@ -101,7 +104,7 @@ namespace IdunnoAPI.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("IdunnoAPI.Models.Message", b =>

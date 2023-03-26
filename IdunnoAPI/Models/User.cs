@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace IdunnoAPI.Models
 {
     [Table("Users")]
     public class User
     {
-
-        [Required] public int UserID { get; private set; }
+        [Key][Required] public int UserId { get; set; }
 
         [Required] public string Username { get; set; }
 

@@ -1,5 +1,4 @@
-﻿using Azure;
-using IdunnoAPI.DAL.Services.Interfaces;
+﻿using IdunnoAPI.DAL.Services.Interfaces;
 using IdunnoAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 

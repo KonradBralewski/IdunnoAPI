@@ -3,6 +3,7 @@ using IdunnoAPI.Helpers;
 using IdunnoAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace IdunnoAPI.DAL.Repositories
 {
@@ -15,21 +16,26 @@ namespace IdunnoAPI.DAL.Repositories
         {
             _context = context;
         }
-        public IEnumerable<Post> GetPosts()
+        public IQueryable<Post> GetPostsAsQueryable()
         {
-            return _context.Posts;
+            return _context.Posts.AsQueryable();
         }
 
-        public async Task<Post> GetPostByIdAsync(int id)
+        /// <summary>
+        ///  Null checking only in postId overload as it will probably be thrown straight from controller.
+        /// </summary>
+        public async Task<Post> FindPostAsync(Expression<Func<Post, bool>> predicate)
         {
-            Post searchedPost = await _context.Posts.Where(p => p.PostID == id).FirstOrDefaultAsync();
+            return await _context.Posts.FirstOrDefaultAsync(predicate);
+        }
 
-            if(searchedPost == null)
-            {
-                throw new RequestException(StatusCodes.Status404NotFound, "This post could not be found.");
-            }
+        public async Task<Post> FindPostAsync(int postId)
+        {
+            Post searched = await _context.Posts.FirstOrDefaultAsync(p => p.PostId == postId);
 
-            return searchedPost;
+            if (searched == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find post.");
+
+            return searched;
         }
 
         public async Task<int> AddPostAsync(Post post)
@@ -40,15 +46,15 @@ namespace IdunnoAPI.DAL.Repositories
 
             if (result == 0)
             {
-                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't add post");
+                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't add post.");
             }
 
-            return post.PostID;
+            return post.PostId;
         }
 
         public async Task<bool> DeletePostAsync(int postID)
         {
-            Post post = new Post { PostID = postID };
+            Post post = new Post { PostId = postID };
 
             _context.Posts.Attach(post);
             _context.Posts.Remove(post);
@@ -66,7 +72,7 @@ namespace IdunnoAPI.DAL.Repositories
 
         public async Task<bool> UpdatePostAsync(Post post)
         {
-            Post postToModify = await GetPostByIdAsync(post.PostID);
+            Post postToModify = await FindPostAsync(post.PostId);
 
             postToModify.PostTitle = post.PostTitle;
             postToModify.PostDescription = post.PostDescription;
@@ -102,7 +108,5 @@ namespace IdunnoAPI.DAL.Repositories
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-
-      
     }
 }
