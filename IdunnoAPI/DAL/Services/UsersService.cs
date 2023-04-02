@@ -9,6 +9,8 @@ using IdunnoAPI.Helpers.Interfaces;
 using IdunnoAPI.Models;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace IdunnoAPI.DAL.Services
 {
@@ -16,15 +18,17 @@ namespace IdunnoAPI.DAL.Services
     {
         private bool disposedValue;
         public IUserRepository Users { get; }
+        private readonly IPostRepository _posts;
         private readonly IJWToken _tk;
         private readonly IBCryptPasswordHasher _passwordHasher;
 
 
-        public UsersService(IUserRepository users, IJWToken tokenGenerator, IBCryptPasswordHasher passwordHasher) 
+        public UsersService(IUserRepository users, IJWToken tokenGenerator, IBCryptPasswordHasher passwordHasher, IPostRepository Posts) 
         {
             Users = users;
             _tk = tokenGenerator;
             _passwordHasher = passwordHasher;
+            _posts = Posts;
         }
 
 
@@ -35,11 +39,19 @@ namespace IdunnoAPI.DAL.Services
         }
         public async Task<string> AuthenticateUser(User user, HttpResponse response)
         {
-            User foundUser = await Users.FindUserAsync(u => u.Username == user.Username);
+            User foundUser; 
+            try
+            {
+                foundUser = await Users.FindUserAsync(u => u.Username == user.Username);
+            }
+            catch(RequestException re) // only when user could not be found
+            {
+                throw new RequestException(StatusCodes.Status401Unauthorized, "Provided credentials are invalid.");
+            }
 
-            PasswordVerificationResult pvr = foundUser != null ? _passwordHasher.VerifyHashedPassword(foundUser.Password, user.Password) : PasswordVerificationResult.Failed;
+            PasswordVerificationResult pvr = _passwordHasher.VerifyHashedPassword(foundUser.Password, user.Password);
 
-            if (foundUser == null || pvr == PasswordVerificationResult.Failed) throw new RequestException(StatusCodes.Status401Unauthorized, "Provided credentials are invalid.");
+            if (pvr == PasswordVerificationResult.Failed) throw new RequestException(StatusCodes.Status401Unauthorized, "Provided credentials are invalid.");
 
             string token = _tk.GenerateToken(foundUser);
 
@@ -48,13 +60,31 @@ namespace IdunnoAPI.DAL.Services
             return token;
         }
 
-        public async Task<string> GetUserNameAsync(int userId)
+        public async Task<UserProfile> GetUserByIdAsync(int userId)
         {
             User foundUser = await Users.FindUserAsync(u => u.UserId == userId);
 
-            if (foundUser == null) throw new RequestException(StatusCodes.Status404NotFound, "User could not be found.");
+            UserProfile userProfile = new UserProfile
+            {
+                Username = foundUser.Username,
+                Role = foundUser.Role,
+                UserPosts = await _posts.GetPostsAsQueryable().Where(p => p.UserId == userId).ToListAsync()
+            };
 
-            return foundUser.Username;
+            return userProfile;
+        }
+
+        public async Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr)
+        {
+            User foundUser = await Users.FindUserAsync(cpr.UserId);
+
+            PasswordVerificationResult pvr = _passwordHasher.VerifyHashedPassword(foundUser.Password, cpr.CurrentPassword);
+
+            if (pvr == PasswordVerificationResult.Failed) throw new RequestException(StatusCodes.Status401Unauthorized, "Provided password is invalid.");
+
+            cpr.NewPassword = _passwordHasher.HashPassword(cpr.NewPassword);
+
+            return await Users.ChangeUserPasswordAsync(cpr);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////

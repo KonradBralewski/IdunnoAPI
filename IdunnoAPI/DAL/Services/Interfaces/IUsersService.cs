@@ -8,7 +8,8 @@ namespace IdunnoAPI.DAL.Services.Interfaces
     {
         IUserRepository Users { get; }
         Task<string> AuthenticateUser(User user, HttpResponse response);
-        Task<string> GetUserNameAsync(int userId);
+        Task<UserProfile> GetUserByIdAsync(int userId);
         Task<bool> RegisterUserAsync(User user);
+        Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr);
     }
 }
