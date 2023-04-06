@@ -1,6 +1,6 @@
 ﻿using IdunnoAPI.DAL.Repositories.Interfaces;
 using IdunnoAPI.Helpers;
-using IdunnoAPI.Models;
+using IdunnoAPI.Models.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Linq.Expressions;

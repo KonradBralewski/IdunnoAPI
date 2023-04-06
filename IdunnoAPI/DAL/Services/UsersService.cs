@@ -6,11 +6,11 @@ using IdunnoAPI.DAL.Repositories.Interfaces;
 using IdunnoAPI.DAL.Services.Interfaces;
 using IdunnoAPI.Helpers;
 using IdunnoAPI.Helpers.Interfaces;
-using IdunnoAPI.Models;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using IdunnoAPI.Models.Users;
 
 namespace IdunnoAPI.DAL.Services
 {

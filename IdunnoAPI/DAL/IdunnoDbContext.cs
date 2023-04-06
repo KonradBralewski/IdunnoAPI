@@ -1,4 +1,6 @@
-﻿using IdunnoAPI.Models;
+﻿using IdunnoAPI.Models.Messages;
+using IdunnoAPI.Models.Posts;
+using IdunnoAPI.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdunnoAPI.DAL

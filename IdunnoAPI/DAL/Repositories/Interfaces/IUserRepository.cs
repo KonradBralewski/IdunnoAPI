@@ -1,4 +1,4 @@
-﻿using IdunnoAPI.Models;
+﻿using IdunnoAPI.Models.Users;
 using System.Linq.Expressions;
 
 namespace IdunnoAPI.DAL.Repositories.Interfaces

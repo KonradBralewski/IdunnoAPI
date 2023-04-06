@@ -3,7 +3,7 @@ using IdunnoAPI.DAL.Services;
 using IdunnoAPI.DAL.Services.Interfaces;
 using IdunnoAPI.Extensions;
 using IdunnoAPI.Helpers;
-using IdunnoAPI.Models;
+using IdunnoAPI.Models.Posts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;

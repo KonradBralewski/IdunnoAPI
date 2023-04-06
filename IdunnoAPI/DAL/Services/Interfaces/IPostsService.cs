@@ -1,5 +1,5 @@
-﻿using IdunnoAPI.Models;
-using IdunnoAPI.DAL.Repositories.Interfaces;
+﻿using IdunnoAPI.DAL.Repositories.Interfaces;
+using IdunnoAPI.Models.Posts;
 
 namespace IdunnoAPI.DAL.Services.Interfaces
 {

@@ -1,5 +1,5 @@
 ﻿using IdunnoAPI.DAL.Services.Interfaces;
-using IdunnoAPI.Models;
+using IdunnoAPI.Models.Users;
 using Microsoft.AspNetCore.Mvc;
 
 

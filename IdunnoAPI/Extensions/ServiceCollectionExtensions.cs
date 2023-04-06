@@ -37,9 +37,10 @@ namespace IdunnoAPI.Extensions
         {
             services.AddScoped<IPostsService, PostsService>();
             services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IMessagesService, MessagesService>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IBCryptPasswordHasher, BCryptPasswordHasher>();
             services.AddScoped<IJWToken, JWToken>();
         }

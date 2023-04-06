@@ -1,6 +1,6 @@
 ﻿using IdunnoAPI.DAL.Repositories.Interfaces;
 using IdunnoAPI.Helpers;
-using IdunnoAPI.Models;
+using IdunnoAPI.Models.Posts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;

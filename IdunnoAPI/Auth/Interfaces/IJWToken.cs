@@ -1,4 +1,4 @@
-﻿using IdunnoAPI.Models;
+﻿using IdunnoAPI.Models.Users;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace IdunnoAPI.Auth.Interfaces

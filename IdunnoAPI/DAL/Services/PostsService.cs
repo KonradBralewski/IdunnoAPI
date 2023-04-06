@@ -2,7 +2,8 @@
 using IdunnoAPI.DAL.Repositories.Interfaces;
 using IdunnoAPI.DAL.Services.Interfaces;
 using IdunnoAPI.Helpers;
-using IdunnoAPI.Models;
+using IdunnoAPI.Models.Posts;
+using IdunnoAPI.Models.Users;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Web;
@@ -12,7 +13,7 @@ namespace IdunnoAPI.DAL.Services
     /// <summary>   Service layer. Return types should be taken with a grain of salt. Error checking is already handled by repository layer by throwing exceptions.
     public class PostsService : IPostsService, IDisposable
     {
-        private bool disposedValue;
+        private bool _disposedValue;
 
         public IPostRepository Posts { get; private set; }
         private readonly IUserRepository _users;
@@ -51,7 +52,7 @@ namespace IdunnoAPI.DAL.Services
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
@@ -59,8 +60,14 @@ namespace IdunnoAPI.DAL.Services
                     {
                         Posts.Dispose();
                     }
+
+                    if(_users != null)
+                    {
+                        _users.Dispose();
+                    }
+                    
                 }
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 

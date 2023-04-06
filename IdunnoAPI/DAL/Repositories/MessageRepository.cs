@@ -1,28 +1,39 @@
 ﻿using IdunnoAPI.DAL.Repositories.Interfaces;
 using IdunnoAPI.Helpers;
-using IdunnoAPI.Models;
+using IdunnoAPI.Models.Messages;
+using IdunnoAPI.Models.Users;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdunnoAPI.DAL.Repositories
 {
     public class MessageRepository : IMessageRepository
     {
-        private readonly IdunnoDbContext _dbContext;
+        private readonly IdunnoDbContext _context;
         private readonly IUserRepository _users;
         private bool disposedValue;
 
-        public MessageRepository(IdunnoDbContext dbContext, IUserRepository users)
+        public MessageRepository(IdunnoDbContext context, IUserRepository users)
         {
-            _dbContext = dbContext;
+            _context = context;
             _users = users;
         }
-        public async Task<IEnumerable<Message>> GetMessagesByReceiverId(int receiverId)
+        public IQueryable<Message> GetMessagesAsQueryable()
         {
-            IQueryable<Message> messages;
+            return _context.Messages.AsQueryable();
+        }
 
-            messages = _dbContext.Messages.Where(msg => msg.ReceiverId == receiverId);
+        public async Task<IEnumerable<MessagesResponse>> GetMessagesByReceiverId(int receiverId)
+        {
+            var msgResponse = (from msg in _context.Messages.Where(m => m.ReceiverId == receiverId)
+                                            join shipper in _context.Users on msg.ShipperId equals shipper.UserId
+                                            select new MessagesResponse
+                                            {
+                                                Message = msg,
+                                                ShipperName = shipper.Username
+                                            }).AsQueryable();
 
-            return await messages.ToListAsync();
+            return await msgResponse.ToListAsync();
         }
         public async Task<bool> AddMessageAsync(Message msg)
         {
@@ -35,9 +46,9 @@ namespace IdunnoAPI.DAL.Repositories
                 throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't send your message!");
             }
 
-            _dbContext.Add(msg);
+            _context.Add(msg);
 
-            int result = await _dbContext.SaveChangesAsync();
+            int result = await _context.SaveChangesAsync();
 
             if(result == 0)
             {
@@ -51,10 +62,10 @@ namespace IdunnoAPI.DAL.Repositories
         {
             Message toBeDeleted = new Message { MessageId = messageId };
 
-            _dbContext.Attach(toBeDeleted);
-            _dbContext.Remove(toBeDeleted);
+            _context.Attach(toBeDeleted);
+            _context.Remove(toBeDeleted);
 
-            int result = await _dbContext.SaveChangesAsync();
+            int result = await _context.SaveChangesAsync();
 
             if (result == 0)
             {

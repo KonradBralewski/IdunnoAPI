@@ -1,5 +1,5 @@
 ﻿using IdunnoAPI.DAL.Repositories.Interfaces;
-using IdunnoAPI.Models;
+using IdunnoAPI.Models.Users;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace IdunnoAPI.DAL.Services.Interfaces

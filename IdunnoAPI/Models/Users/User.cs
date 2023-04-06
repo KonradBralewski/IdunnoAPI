@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace IdunnoAPI.Models
+namespace IdunnoAPI.Models.Users
 {
     [Table("Users")]
     public class User

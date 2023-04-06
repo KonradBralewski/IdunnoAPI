@@ -1,6 +1,7 @@
 ﻿using IdunnoAPI.DAL.Repositories.Interfaces;
+using IdunnoAPI.DAL.Services.Interfaces;
 using IdunnoAPI.Extensions;
-using IdunnoAPI.Models;
+using IdunnoAPI.Models.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,24 +14,26 @@ namespace IdunnoAPI.Controllers
     public class MessagesController : BaseIdunnoController
     {
         private readonly IMessageRepository _messages;
-        public MessagesController(IMessageRepository messageRepository)
+        private readonly IMessagesService _messagesService;
+        public MessagesController(IMessageRepository messageRepository, IMessagesService messagesService)
         {
             _messages = messageRepository;
+            _messagesService = messagesService;
         }
 
         [HttpGet]
+        [Route("CurrentUser")]
         public async Task<ActionResult> GetMessagesAsync() // this default GET Method (.../api/Messages) will return calling user messages
         {
-            IEnumerable<Message> messages = await _messages.GetMessagesByReceiverId(this.GetCallerId());
-
+            IEnumerable<MessagesResponse> messages = await _messages.GetMessagesByReceiverId(this.GetCallerId());
+            
             return Ok(messages);
         }
 
         [HttpPost]
-        public async Task<ActionResult> SendMessageAsync([FromBody]Message msg)
+        public async Task<ActionResult> SendMessageAsync([FromBody]SendMessageRequest smr)
         {
-            msg.ShipperId = this.GetCallerId();
-            await _messages.AddMessageAsync(msg);
+            await _messages.AddMessageAsync(new Message { Msg = smr.Msg, ShipperId = this.GetCallerId(), ReceiverId = smr.ReceiverId});
 
             return Ok(); // TODO: check if this is acceptable in REST convention
         }
