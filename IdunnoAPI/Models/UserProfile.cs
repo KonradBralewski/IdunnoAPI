@@ -1,4 +1,6 @@
-﻿namespace IdunnoAPI.Models
+﻿using IdunnoAPI.Models.Posts;
+
+namespace IdunnoAPI.Models
 {
     public class UserProfile // not actual DB model, will be used in GET UsersController methods
     {
