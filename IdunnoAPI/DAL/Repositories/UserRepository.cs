@@ -22,6 +22,15 @@ namespace IdunnoAPI.DAL.Repositories
         {
             return _context.Users.AsQueryable();
         }
+        public async Task<IEnumerable<UserDTO>> GetUsersByUsernameAsync(string username)
+        {
+            IEnumerable<UserDTO> users = await GetUsersAsQueryable().Where(u => u.Username.Contains(username))
+                .Select(u => new UserDTO { UserId = u.UserId, Username = u.Username, Role = u.Role }).ToListAsync();
+
+            if (users == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find any user.");
+
+            return users;
+        }
 
         public async Task<User> FindUserAsync(Expression<Func<User, bool>> predicate)
         {
@@ -39,6 +48,19 @@ namespace IdunnoAPI.DAL.Repositories
             if (searched == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find user.");
 
             return searched;
+        }
+        public async Task<UserDTO> GetUserByIdAsync(int userId)
+        {
+            User foundUser = await FindUserAsync(u => u.UserId == userId);
+
+            UserDTO user = new UserDTO
+            {
+                UserId = foundUser.UserId,
+                Username = foundUser.Username,
+                Role = foundUser.Role,
+            };
+
+            return user;
         }
 
         public async Task<bool> AddUserAsync(User user)
@@ -70,7 +92,7 @@ namespace IdunnoAPI.DAL.Repositories
 
             if (result == 0)
             {
-                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't update user password.");
+                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't update user password. Server error.");
             }
 
             return true;

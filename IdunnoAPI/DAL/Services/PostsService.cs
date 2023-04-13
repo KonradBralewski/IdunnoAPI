@@ -24,14 +24,7 @@ namespace IdunnoAPI.DAL.Services
             _users = users;
         }
 
-        public async Task<IEnumerable<Post>> GetPostsByMatch(string match)
-        {
-            IQueryable<Post> posts = Posts.GetPostsAsQueryable();
-
-            return await posts.Where(p => p.PostTitle.Contains(match) || p.PostDescription.Contains(match)).ToListAsync();
-        }
-
-        public async Task<KeyValuePair<Post, string>> GetPostByIdWithAuthor(int postId)
+        public async Task<KeyValuePair<Post, string>> GetPostByIdWithAuthorAsync(int postId)
         {
             Post post = await Posts.FindPostAsync(postId);
 

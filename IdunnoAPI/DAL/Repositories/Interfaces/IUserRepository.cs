@@ -6,6 +6,8 @@ namespace IdunnoAPI.DAL.Repositories.Interfaces
     public interface IUserRepository : IDisposable
     {
         IQueryable<User> GetUsersAsQueryable();
+        Task<IEnumerable<UserDTO>> GetUsersByUsernameAsync(string username);
+        Task<UserDTO> GetUserByIdAsync(int userId);
         Task<User> FindUserAsync(Expression<Func<User, bool>> predicate);
         Task<User> FindUserAsync(int userId);
         Task<bool> AddUserAsync(User user);

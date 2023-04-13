@@ -23,9 +23,9 @@ namespace IdunnoAPI.Controllers
 
         [HttpGet]
         [Route("CurrentUser")]
-        public async Task<ActionResult> GetMessagesAsync() // this default GET Method (.../api/Messages) will return calling user messages
+        public async Task<ActionResult> GetCurrentUserMessagesAsync()
         {
-            IEnumerable<MessagesResponse> messages = await _messages.GetMessagesByReceiverId(this.GetCallerId());
+            IEnumerable<MessageDTO> messages = await _messages.GetMessagesByReceiverId(this.GetCallerId());
             
             return Ok(messages);
         }
@@ -35,11 +35,11 @@ namespace IdunnoAPI.Controllers
         {
             await _messages.AddMessageAsync(new Message { Msg = smr.Msg, ShipperId = this.GetCallerId(), ReceiverId = smr.ReceiverId});
 
-            return Ok(); // TODO: check if this is acceptable in REST convention
+            return Ok("Message has been sent.");
         }
 
-        [Route("{messageId}")]
         [HttpDelete]
+        [Route("{messageId}")]
         public async Task<ActionResult> DeleteMessageAsync([FromRoute]int messageId)
         {
             await _messages.RemoveMessageAsync(messageId);

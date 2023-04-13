@@ -36,7 +36,7 @@ namespace IdunnoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult> GetPostsByMatchAsync([FromQuery]string match)
         {
-            IEnumerable<Post> posts = await _postsService.GetPostsByMatch(match);
+            IEnumerable<Post> posts = await _posts.GetPostsByMatchAsync(match);
 
             return Ok(posts);
         }
@@ -45,7 +45,7 @@ namespace IdunnoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult> GetByIdAsync([FromRoute]int postID)
         {
-            return Ok(await _postsService.GetPostByIdWithAuthor(postID));
+            return Ok(await _postsService.GetPostByIdWithAuthorAsync(postID));
         }
 
         [HttpPost]

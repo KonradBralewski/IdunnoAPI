@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using IdunnoAPI.Models.Users;
+using IdunnoAPI.Models.Posts;
 
 namespace IdunnoAPI.DAL.Services
 {
@@ -60,18 +61,14 @@ namespace IdunnoAPI.DAL.Services
             return token;
         }
 
-        public async Task<UserProfile> GetUserByIdAsync(int userId)
+        public async Task<KeyValuePair<UserDTO, IEnumerable<Post>>> GetUserProfileByIdAsync(int userId)
         {
-            User foundUser = await Users.FindUserAsync(u => u.UserId == userId);
+            UserDTO user = await Users.GetUserByIdAsync(userId);
+            IEnumerable<Post> posts = await _posts.GetPostsAsQueryable().Where(p => p.UserId == userId).ToListAsync();
 
-            UserProfile userProfile = new UserProfile
-            {
-                Username = foundUser.Username,
-                Role = foundUser.Role,
-                UserPosts = await _posts.GetPostsAsQueryable().Where(p => p.UserId == userId).ToListAsync()
-            };
+            if (posts == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find user posts.");
 
-            return userProfile;
+            return new KeyValuePair<UserDTO, IEnumerable<Post>>(user, posts);
         }
 
         public async Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr)

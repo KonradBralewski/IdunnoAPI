@@ -23,18 +23,39 @@ namespace IdunnoAPI.DAL.Repositories
             return _context.Messages.AsQueryable();
         }
 
-        public async Task<IEnumerable<MessagesResponse>> GetMessagesByReceiverId(int receiverId)
+        public async Task<IEnumerable<MessageDTO>> GetMessagesByReceiverId(int receiverId)
         {
-            var msgResponse = (from msg in _context.Messages.Where(m => m.ReceiverId == receiverId)
+            IQueryable<MessageDTO> messages = (from msg in _context.Messages.Where(m => m.ReceiverId == receiverId || m.isGlobalMessage)
                                             join shipper in _context.Users on msg.ShipperId equals shipper.UserId
-                                            select new MessagesResponse
+                                            select new MessageDTO
                                             {
                                                 Message = msg,
                                                 ShipperName = shipper.Username
-                                            }).AsQueryable();
+                                            }).OrderBy(m => m.ShipperName)
+                                            .AsQueryable();
 
-            return await msgResponse.ToListAsync();
+            if (messages == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find user messages.");
+
+            return await messages.ToListAsync();
         }
+
+        public async Task<IEnumerable<MessageDTO>> BuildConversationAsync(int receiverId, int shipperId)
+        {
+            IQueryable<MessageDTO> messages = (from msg in _context.Messages.Where(m => (m.ReceiverId == receiverId && m.ShipperId == shipperId) ||
+                                               (m.ReceiverId == shipperId && m.ShipperId == receiverId))
+                                               join shipper in _context.Users on msg.ShipperId equals shipper.UserId
+                                               select new MessageDTO
+                                               {
+                                                   Message = msg,
+                                                   ShipperName = shipper.Username
+                                               }).AsQueryable();
+
+            if (messages == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find user conversation.");
+
+            return await messages.ToListAsync();
+        }
+
+
         public async Task<bool> AddMessageAsync(Message msg)
         {
             User shipper = new User { UserId = msg.ShipperId };

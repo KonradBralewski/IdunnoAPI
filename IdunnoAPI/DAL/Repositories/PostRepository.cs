@@ -3,6 +3,7 @@ using IdunnoAPI.Helpers;
 using IdunnoAPI.Models.Posts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System.Linq.Expressions;
 
 namespace IdunnoAPI.DAL.Repositories
@@ -24,6 +25,16 @@ namespace IdunnoAPI.DAL.Repositories
         /// <summary>
         ///  Null checking only in postId overload as it will probably be thrown straight from controller.
         /// </summary>
+        /// 
+        public async Task<IEnumerable<Post>> GetPostsByMatchAsync(string match)
+        {
+            IEnumerable<Post> posts = await GetPostsAsQueryable().Where(p => p.PostTitle.Contains(match) || p.PostDescription.Contains(match)).ToListAsync();
+
+            if (posts == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find any posts.");
+
+            return posts;
+
+        }
         public async Task<Post> FindPostAsync(Expression<Func<Post, bool>> predicate)
         {
             return await _context.Posts.FirstOrDefaultAsync(predicate);
@@ -46,7 +57,7 @@ namespace IdunnoAPI.DAL.Repositories
 
             if (result == 0)
             {
-                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't add post.");
+                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't add post. Server error.");
             }
 
             return post.PostId;
@@ -63,7 +74,7 @@ namespace IdunnoAPI.DAL.Repositories
 
             if (result == 0)
             {
-                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't delete post");
+                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't delete post. Server error.");
             }
 
             return true;
@@ -81,7 +92,7 @@ namespace IdunnoAPI.DAL.Repositories
 
             if (result == 0)
             {
-                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't update post");
+                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't update post. Server error.");
             }
 
             return true;

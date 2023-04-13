@@ -6,6 +6,7 @@ namespace IdunnoAPI.DAL.Repositories.Interfaces
     public interface IPostRepository : IDisposable
     {
         IQueryable<Post> GetPostsAsQueryable();
+        Task<IEnumerable<Post>> GetPostsByMatchAsync(string match);
         Task<Post> FindPostAsync(Expression<Func<Post, bool>> predicate);
         Task<Post> FindPostAsync(int postId);
         Task<int> AddPostAsync(Post post);

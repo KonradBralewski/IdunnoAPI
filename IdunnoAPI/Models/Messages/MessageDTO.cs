@@ -2,7 +2,7 @@
 
 namespace IdunnoAPI.Models.Messages
 {
-    public class MessagesResponse
+    public class MessageDTO
     {
         public Message Message {get; set;}
         public string ShipperName { get; set;}
