@@ -73,7 +73,7 @@ namespace IdunnoAPI.DAL.Services
 
         public async Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr)
         {
-            User foundUser = await Users.FindUserAsync(cpr.UserId);
+            User foundUser = await Users.FindUserAsync(u => u.UserId == cpr.UserId);
 
             PasswordVerificationResult pvr = _passwordHasher.VerifyHashedPassword(foundUser.Password, cpr.CurrentPassword);
 

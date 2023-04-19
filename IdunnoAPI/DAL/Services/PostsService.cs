@@ -26,12 +26,12 @@ namespace IdunnoAPI.DAL.Services
 
         public async Task<KeyValuePair<Post, string>> GetPostByIdWithAuthorAsync(int postId)
         {
-            Post post = await Posts.FindPostAsync(postId);
+            Post post = await Posts.FindPostAsync(p=> p.PostId == postId);
 
             string author;
             try
             {
-                User authorUser = await _users.FindUserAsync(post.UserId);
+                User authorUser = await _users.FindUserAsync(p => p.UserId == post.UserId);
                 author = authorUser.Username;
             }
             catch (RequestException notFoundException)

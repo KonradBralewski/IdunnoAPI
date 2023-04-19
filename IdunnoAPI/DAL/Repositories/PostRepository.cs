@@ -35,14 +35,10 @@ namespace IdunnoAPI.DAL.Repositories
             return posts;
 
         }
+
         public async Task<Post> FindPostAsync(Expression<Func<Post, bool>> predicate)
         {
-            return await _context.Posts.FirstOrDefaultAsync(predicate);
-        }
-
-        public async Task<Post> FindPostAsync(int postId)
-        {
-            Post searched = await _context.Posts.FirstOrDefaultAsync(p => p.PostId == postId);
+            Post searched = await _context.Posts.FirstOrDefaultAsync(predicate);
 
             if (searched == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find post.");
 
@@ -83,7 +79,7 @@ namespace IdunnoAPI.DAL.Repositories
 
         public async Task<bool> UpdatePostAsync(Post post)
         {
-            Post postToModify = await FindPostAsync(post.PostId);
+            Post postToModify = await FindPostAsync(p=> p.PostId == post.PostId);
 
             postToModify.PostTitle = post.PostTitle;
             postToModify.PostDescription = post.PostDescription;

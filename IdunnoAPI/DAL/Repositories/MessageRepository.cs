@@ -1,9 +1,11 @@
 ﻿using IdunnoAPI.DAL.Repositories.Interfaces;
 using IdunnoAPI.Helpers;
 using IdunnoAPI.Models.Messages;
+using IdunnoAPI.Models.Posts;
 using IdunnoAPI.Models.Users;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace IdunnoAPI.DAL.Repositories
 {
@@ -41,6 +43,8 @@ namespace IdunnoAPI.DAL.Repositories
 
         public async Task<IEnumerable<MessageDTO>> BuildConversationAsync(int receiverId, int shipperId)
         {
+            await _users.FindUserAsync(u=> u.UserId == shipperId); // Throws exception if user doesn't exist.
+
             IQueryable<MessageDTO> messages = (from msg in _context.Messages.Where(m => (m.ReceiverId == receiverId && m.ShipperId == shipperId) ||
                                                (m.ReceiverId == shipperId && m.ShipperId == receiverId))
                                                join shipper in _context.Users on msg.ShipperId equals shipper.UserId
@@ -53,6 +57,15 @@ namespace IdunnoAPI.DAL.Repositories
             if (messages == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find user conversation.");
 
             return await messages.ToListAsync();
+        }
+
+        public async Task<Message> FindMessageAsync(Expression<Func<Message, bool>> predicate)
+        {
+            Message searched = await _context.Messages.FirstOrDefaultAsync(predicate);
+
+            if (searched == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find message.");
+
+            return searched;
         }
 
 

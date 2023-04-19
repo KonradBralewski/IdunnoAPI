@@ -40,15 +40,6 @@ namespace IdunnoAPI.DAL.Repositories
 
             return searched;
         }
-
-        public async Task<User> FindUserAsync(int userId)
-        {
-            User searched = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
-
-            if (searched == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find user.");
-
-            return searched;
-        }
         public async Task<UserDTO> GetUserByIdAsync(int userId)
         {
             User foundUser = await FindUserAsync(u => u.UserId == userId);
@@ -84,7 +75,7 @@ namespace IdunnoAPI.DAL.Repositories
 
         public async Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr)
         {
-            User userToModify = await FindUserAsync(cpr.UserId);
+            User userToModify = await FindUserAsync(u => u.UserId == cpr.UserId);
 
             userToModify.Password = cpr.NewPassword;
 

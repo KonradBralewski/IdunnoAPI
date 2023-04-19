@@ -9,7 +9,6 @@ namespace IdunnoAPI.DAL.Repositories.Interfaces
         Task<IEnumerable<UserDTO>> GetUsersByUsernameAsync(string username);
         Task<UserDTO> GetUserByIdAsync(int userId);
         Task<User> FindUserAsync(Expression<Func<User, bool>> predicate);
-        Task<User> FindUserAsync(int userId);
         Task<bool> AddUserAsync(User user);
         Task<bool> DeleteUserAsync(int userId);
         Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr);
