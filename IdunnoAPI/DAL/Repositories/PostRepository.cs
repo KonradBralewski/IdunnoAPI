@@ -12,20 +12,18 @@ namespace IdunnoAPI.DAL.Repositories
     {
         private readonly IdunnoDbContext _context;
         private bool disposedValue;
+        private DbContextOptions<IdunnoDbContext> options;
 
         public PostRepository(IdunnoDbContext context)
         {
             _context = context;
         }
+
         public IQueryable<Post> GetPostsAsQueryable()
         {
             return _context.Posts.AsQueryable();
         }
 
-        /// <summary>
-        ///  Null checking only in postId overload as it will probably be thrown straight from controller.
-        /// </summary>
-        /// 
         public async Task<IEnumerable<Post>> GetPostsByMatchAsync(string match)
         {
             IEnumerable<Post> posts = await GetPostsAsQueryable().Where(p => p.PostTitle.Contains(match) || p.PostDescription.Contains(match)).ToListAsync();
@@ -53,7 +51,6 @@ namespace IdunnoAPI.DAL.Repositories
 
             if (result == 0)
             {
-                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't add post. Server error.");
             }
 
             return post.PostId;
