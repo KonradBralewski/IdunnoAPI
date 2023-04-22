@@ -73,7 +73,7 @@ namespace IdunnoAPI.DAL.Repositories
             throw new RequestException(StatusCodes.Status409Conflict, "Entered login already exists.");
         }
 
-        public async Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr)
+        public async Task<bool> ChangeUserPasswordAsync(ChangePasswordRequestDTO cpr)
         {
             User userToModify = await FindUserAsync(u => u.UserId == cpr.UserId);
 

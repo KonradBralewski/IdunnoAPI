@@ -11,6 +11,6 @@ namespace IdunnoAPI.DAL.Repositories.Interfaces
         Task<User> FindUserAsync(Expression<Func<User, bool>> predicate);
         Task<bool> AddUserAsync(User user);
         Task<bool> DeleteUserAsync(int userId);
-        Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr);
+        Task<bool> ChangeUserPasswordAsync(ChangePasswordRequestDTO cpr);
     }
 }

@@ -31,7 +31,7 @@ namespace IdunnoAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SendMessageAsync([FromBody]SendMessageRequest smr)
+        public async Task<ActionResult> SendMessageAsync([FromBody]SendMessageRequestDTO smr)
         {
             await _messages.AddMessageAsync(new Message { Msg = smr.Msg, ShipperId = this.GetCallerId(), ReceiverId = smr.ReceiverId});
 

@@ -12,7 +12,6 @@ namespace IdunnoAPI.DAL.Repositories
     {
         private readonly IdunnoDbContext _context;
         private bool disposedValue;
-        private DbContextOptions<IdunnoDbContext> options;
 
         public PostRepository(IdunnoDbContext context)
         {

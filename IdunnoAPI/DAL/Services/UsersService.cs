@@ -71,7 +71,7 @@ namespace IdunnoAPI.DAL.Services
             return new KeyValuePair<UserDTO, IEnumerable<Post>>(user, posts);
         }
 
-        public async Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr)
+        public async Task<bool> ChangeUserPasswordAsync(ChangePasswordRequestDTO cpr)
         {
             User foundUser = await Users.FindUserAsync(u => u.UserId == cpr.UserId);
 

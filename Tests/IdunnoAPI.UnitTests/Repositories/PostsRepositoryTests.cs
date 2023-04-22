@@ -27,7 +27,7 @@ namespace IdunnoAPI.UnitTests.Repositories
         }
 
         [Fact]
-        public async Task AddPostAsync_GivenValidRequest_ExpectedPostIsAdded()
+        public async Task AddPostAsync_GivenValidRequest_NewPostIdReturned()
         {
             // Arrange
 
