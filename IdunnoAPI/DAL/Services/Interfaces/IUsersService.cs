@@ -11,6 +11,6 @@ namespace IdunnoAPI.DAL.Services.Interfaces
         Task<string> AuthenticateUser(User user, HttpResponse response);
         Task<KeyValuePair<UserDTO, IEnumerable<Post>>> GetUserProfileByIdAsync(int userId);
         Task<bool> RegisterUserAsync(User user);
-        Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr);
+        Task<bool> ChangeUserPasswordAsync(ChangePasswordRequestDTO cpr);
     }
 }

@@ -12,7 +12,6 @@ namespace IdunnoAPI.DAL.Repositories
     {
         private readonly IdunnoDbContext _context;
         private bool disposedValue;
-        private DbContextOptions<IdunnoDbContext> options;
 
         public PostRepository(IdunnoDbContext context)
         {
@@ -26,19 +25,35 @@ namespace IdunnoAPI.DAL.Repositories
 
         public async Task<IEnumerable<Post>> GetPostsByMatchAsync(string match)
         {
+            if(match == String.Empty)
+            {
+                throw new RequestException(StatusCodes.Status400BadRequest, "Search query is empty. Bad Request");
+            }
+
             IEnumerable<Post> posts = await GetPostsAsQueryable().Where(p => p.PostTitle.Contains(match) || p.PostDescription.Contains(match)).ToListAsync();
 
-            if (posts == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find any posts.");
+            if (posts == null)
+            {
+                throw new RequestException(StatusCodes.Status500InternalServerError, "We couldn't process posts search. Server error.");
+            }
 
+            if (posts.Count() == 0)
+            {
+                throw new RequestException(statusCode: StatusCodes.Status404NotFound, "Couldn't find any post.");
+            }
+
+               
             return posts;
-
         }
 
         public async Task<Post> FindPostAsync(Expression<Func<Post, bool>> predicate)
         {
             Post searched = await _context.Posts.FirstOrDefaultAsync(predicate);
 
-            if (searched == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find post.");
+            if (searched == null)
+            {
+                throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find post.");
+            }
 
             return searched;
         }
@@ -51,17 +66,18 @@ namespace IdunnoAPI.DAL.Repositories
 
             if (result == 0)
             {
+                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't add post. Server error.");
             }
 
             return post.PostId;
         }
 
-        public async Task<bool> DeletePostAsync(int postID)
+        public async Task<bool> DeletePostAsync(int postId)
         {
-            Post post = new Post { PostId = postID };
+            Post postToDelete = await FindPostAsync(p => p.PostId == postId);
 
-            _context.Posts.Attach(post);
-            _context.Posts.Remove(post);
+            _context.Posts.Attach(postToDelete);
+            _context.Posts.Remove(postToDelete);
 
             int result = await _context.SaveChangesAsync();
 

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace IdunnoAPI.DAL.Repositories
@@ -24,10 +25,24 @@ namespace IdunnoAPI.DAL.Repositories
         }
         public async Task<IEnumerable<UserDTO>> GetUsersByUsernameAsync(string username)
         {
+            if(username == String.Empty)
+            {
+                throw new RequestException(StatusCodes.Status400BadRequest, "Search query is empty. Bad Request.");
+            }
+
             IEnumerable<UserDTO> users = await GetUsersAsQueryable().Where(u => u.Username.Contains(username))
                 .Select(u => new UserDTO { UserId = u.UserId, Username = u.Username, Role = u.Role }).ToListAsync();
 
-            if (users == null) throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find any user.");
+
+            if (users == null)
+            {
+                throw new RequestException(StatusCodes.Status500InternalServerError, "Couldn't process user search. Server error.");
+            }
+
+            if (users.Count() == 0)
+            {
+                throw new RequestException(StatusCodes.Status404NotFound, "Couldn't find any user.");
+            }
 
             return users;
         }
@@ -73,7 +88,7 @@ namespace IdunnoAPI.DAL.Repositories
             throw new RequestException(StatusCodes.Status409Conflict, "Entered login already exists.");
         }
 
-        public async Task<bool> ChangeUserPasswordAsync(ChangePasswordRequest cpr)
+        public async Task<bool> ChangeUserPasswordAsync(ChangePasswordRequestDTO cpr)
         {
             User userToModify = await FindUserAsync(u => u.UserId == cpr.UserId);
 

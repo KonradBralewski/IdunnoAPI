@@ -62,7 +62,7 @@ namespace IdunnoAPI.Controllers
 
         [HttpPost]
         [Route("CurrentUser")]
-        public async Task<ActionResult> ChangeCurrentUserPasswordAsync(ChangePasswordRequest cpr)
+        public async Task<ActionResult> ChangeCurrentUserPasswordAsync(ChangePasswordRequestDTO cpr)
         {
             cpr.UserId = this.GetCallerId();
             await _usersService.ChangeUserPasswordAsync(cpr);

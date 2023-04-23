@@ -49,10 +49,9 @@ namespace IdunnoAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddAsync([FromBody]Post post) // this.GetCallerId() because even if userId will be passed in request we will ignore it, we don't want it from clientside.
+        public async Task<ActionResult> AddAsync([FromBody]AddPostRequestDTO post)
         {
-            post.UserId = this.GetCallerId();
-            int newPostID = await _posts.AddPostAsync(post);
+            int newPostID = await _posts.AddPostAsync(new Post { UserId = this.GetCallerId(), PostTitle = post.PostTitle, PostDescription = post.PostDescription});
             return Created($"api/Posts/{newPostID}", post);
         }
 

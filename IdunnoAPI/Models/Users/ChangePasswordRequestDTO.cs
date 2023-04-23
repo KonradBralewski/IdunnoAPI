@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace IdunnoAPI.Models
+namespace IdunnoAPI.Models.Users
 {
-    public class ChangePasswordRequest
+    public class ChangePasswordRequestDTO 
     {
         [Required] public int UserId { get; set; }
         [Required] public string CurrentPassword { get; set; }
